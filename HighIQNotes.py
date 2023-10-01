@@ -1,8 +1,10 @@
+import json
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import (QListWidget,
         QPushButton, QLabel, QLineEdit,
         QTextEdit, QApplication, QWidget,
-        QHBoxLayout, QVBoxLayout)
+        QHBoxLayout, QVBoxLayout,
+        QInputDialog)
 
 app = QApplication([])
 
@@ -13,6 +15,16 @@ height = 600
 window.resize(width, height)
 window.move(250, 50)
 window.setWindowTitle('NIGA')
+
+notes = {
+    'Замітка 1': {
+        'текст': "Маст хев",
+        "теги": ["чернетка", "думки"]
+    }
+}
+
+with open('f.json', 'w') as file:
+    json.dump(notes, file)
 
 btn_add = QPushButton('Створити замітку')
 btn_del = QPushButton('Видалити замітку')
@@ -25,7 +37,8 @@ list_notes = QLabel('Список заміток')
 list_tag = QLabel('Список тегів')
 
 edit_text = QTextEdit()
-edit_line = QLineEdit('Введіть тег...')
+edit_line = QLineEdit()
+edit_line.setPlaceholderText('Введіть тег...')
 
 list_notes_widget = QListWidget()
 list_tag_widget = QListWidget()
@@ -54,5 +67,23 @@ layoutH3.addLayout(layoutV1)
 layoutH3.addLayout(layoutV2)
 window.setLayout(layoutH3)
 
+def show_notes():
+    key = list_notes_widget.selectedItems()[0].text()
+    edit_text.setText(notes[key]['текст'])
+
+def add_notes():
+    dialog, ok = QInputDialog.getText(window, 'Додати замітку', "Назва замітки") 
+    if dialog and ok != '':
+        notes[dialog] = {'Текст':"", "Теги":[]}
+        list_notes_widget.addItem(dialog)
+
+list_notes_widget.itemClicked.connect(show_notes)
+btn_add.clicked.connect(add_notes)
+
+
+list_notes_widget.itemClicked.connect(show_notes)
+with open('f.json', 'r') as file:
+    notes = json.load(file)
+list_notes_widget.addItems(notes)
 window.show()
 app.exec_()
