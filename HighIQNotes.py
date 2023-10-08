@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (QListWidget,
         QInputDialog)
 
 app = QApplication([])
-
+app.setStyle('Fusion')
 
 window = QWidget()
 width = 900
@@ -16,15 +16,7 @@ window.resize(width, height)
 window.move(250, 50)
 window.setWindowTitle('NIGA')
 
-notes = {
-    'Замітка 1': {
-        'текст': "Маст хев",
-        "теги": ["чернетка", "думки"]
-    }
-}
 
-with open('f.json', 'w') as file:
-    json.dump(notes, file)
 
 btn_add = QPushButton('Створити замітку')
 btn_del = QPushButton('Видалити замітку')
@@ -74,16 +66,53 @@ def show_notes():
 def add_notes():
     dialog, ok = QInputDialog.getText(window, 'Додати замітку', "Назва замітки") 
     if dialog and ok != '':
-        notes[dialog] = {'Текст':"", "Теги":[]}
+        notes[dialog] = {'текст':"", "теги":[]}
         list_notes_widget.addItem(dialog)
+
+
+def save_notes():
+    if list_notes_widget.selectedItems():
+        key = list_notes_widget.selectedItems()[0].text()
+        notes[key]['текст'] = edit_text.toPlainText()
+        with open('f.json', 'w') as file:
+            json.dump(notes, file)
+
+
+def del_notes():
+    if list_notes_widget.selectedItems():
+        key = list_notes_widget.selectedItems()[0].text()
+        del notes[key]
+        edit_text.clear()
+        list_notes_widget.clear()
+        list_notes_widget.addItems(notes)
+        with open('f.json', 'w') as file:
+            json.dump(notes, file)
+
+
+
 
 list_notes_widget.itemClicked.connect(show_notes)
 btn_add.clicked.connect(add_notes)
+btn_save.clicked.connect(save_notes)
+btn_del.clicked.connect(del_notes)
 
 
 list_notes_widget.itemClicked.connect(show_notes)
 with open('f.json', 'r') as file:
     notes = json.load(file)
 list_notes_widget.addItems(notes)
+
+
+list_notes.setStyleSheet("background-color: blue")
+btn_add.setStyleSheet("background-color : pink ")
+btn_save.setStyleSheet("background-color: pink;")
+btn_del.setStyleSheet("background-color: pink;")
+btn_add_to.setStyleSheet("background-color: red;")
+btn_open.setStyleSheet("background-color: red;")
+btn_search.setStyleSheet("background-color: red;")
+list_notes_widget.setStyleSheet("background-color: Aliceblue;")
+list_tag_widget.setStyleSheet("background-color: Aliceblue;")
+list_tag.setStyleSheet("background-color: blue;")
+
 window.show()
 app.exec_()
