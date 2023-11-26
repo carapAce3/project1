@@ -1,14 +1,35 @@
 from pygame import *
 
+
+class Object(sprite.Sprite):
+    def __init__(self,player_image,x,y,w,h,speed):
+        super().__init__()
+        self.image = transform.scale(image.load(player_image),(w,h))
+        self.speed = speed
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def reset(self):
+        window.blit(self.image,(self.rect.x,self.rect.y))
+    def move(self):
+        keys = key.get_pressed()
+        if keys[K_a] and self.rect.x > 0:
+            self.rect.x -= self.speed
+        if keys[K_d] and self.rect.x < 1000:
+            self.rect.x += self.speed
+        if keys[K_w] and self.rect.y > 0:
+            self.rect.y -= self.speed
+        if keys[K_s] and self.rect.y < 700:
+            self.rect.y += self.speed
+
+
 window = display.set_mode((1100,700), RESIZABLE)
 picture = transform.scale(image.load("bg1.png"),(1100,700))
-anti_mage = transform.scale(image.load("anti-mage.png"),(100,150))
-pudge = transform.scale(image.load("pudge.png"),(100,150))
-pudge1 = transform.scale(image.load("hook.webp"),(100,150))
+
+anti_mage = Object("anti-mage.png",200,150,150,150,10)
+pudge = Object("pudge.png",100,150,150,150,10)
 clock = time.Clock()
-x1, y1 = 100,100
-x2, y2 = 100,100
-x3, y3 = 100,100
 #створення головного циклу
 game = True
 while game:
@@ -19,35 +40,11 @@ while game:
 
 
     window.blit(picture,(0,0))
-    window.blit(anti_mage,(x1,y1))
-    window.blit(pudge,(x2,y2))
-    
-    key_pressed = key.get_pressed()
-    if key_pressed[K_LEFT] and x1 > 0:
-        x1 -= 5
-    if key_pressed[K_RIGHT] and x1 < 1000:
-        x1 += 5
-    if key_pressed[K_UP] and y1 > 0:
-        y1 -= 5
-    if key_pressed[K_DOWN] and y1 < 600:
-        y1 += 5
+    anti_mage.reset()
+    pudge.reset()
+    anti_mage.move()
 
-    if key_pressed[K_a] and x2 > 0:
-        x2 -= 5
-    if key_pressed[K_d] and x2 < 1000:
-        x2 += 5
-    if key_pressed[K_w] and y2 > 0:
-        y2 -= 5
-    if key_pressed[K_s] and y2 < 600:
-        y2 += 5
-    if key_pressed[K_q]:
-        window.blit(pudge1,(x2 - 80,y2 + 50))
-        
-
-
-
-    
-
+ 
     
     display.update()
     clock.tick(60)
