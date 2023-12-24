@@ -16,11 +16,13 @@ class Object(sprite.Sprite):
         keys = key.get_pressed()
         if keys[K_a] and self.rect.x > 0:
             self.rect.x -= self.speed
+            self.image = transform.scale(image.load('anti-mage2.png'),(100,100))
             for w in walls:
                 if sprite.collide_rect(anti_mage,w):
                     self.rect.x += self.speed
         if keys[K_d] and self.rect.x < 1000:
             self.rect.x += self.speed
+            self.image = transform.scale(image.load('anti-mage.png'),(100,100))
             for w in walls:
                 if sprite.collide_rect(anti_mage,w):
                     self.rect.x -= self.speed
@@ -59,6 +61,10 @@ class Object(sprite.Sprite):
         else:
             self.rect.y -= self.speed
 
+    def fire(self):
+        bullet = Bullet("hook.webp", self.rect.centerx,self.rect.centery,15,15,10)
+        bullets.add(bullet)
+
 class Wall(sprite.Sprite):
     def __init__(self, color_1, color_2, color_3, wall_x, wall_y, wall_width, wall_height):
         super().__init__()
@@ -79,6 +85,15 @@ class Wall(sprite.Sprite):
     def draw_wall(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
+class Bullet(Object):
+    def update(self):
+        self.rect.x += 10
+        if self.rect.x > 1100:
+            self.kill()
+
+bullets = sprite.Group()
+
+
 
 
 
@@ -90,16 +105,17 @@ pudge = Object("pudge.png",800,50,100,100,4)
 Krip = Object("Krip1.webp",500,150,100,100,4)
 Rune1 = Object("rune.png",1030,20,70,70,4)
 Rune2 = Object("rune.png",300,450,70,70,4)
+next_level = Object("next_level.png",230,575,200,200,4)
 
 wall = Wall(0, 0, 0, 200, 200, 750, 40)
-wall2 = Wall(0, 0, 0, 200, 200, 40, 1000)
+###wall2 = Wall(0, 0, 0, 200, 200, 40, 1000)
 wall3 = Wall(0, 0, 0, 200, 350, 250, 40)
 wall4 = Wall(0, 0, 0, 450, 350, 40, 250)
 wall5 = Wall(0, 0, 0, 230,560, 250, 40)
 wall6 = Wall(0, 0, 0, 450,550, 40, 250)
 walls = []
 walls.append(wall)
-walls.append(wall2)
+###walls.append(wall2)
 walls.append(wall3)
 walls.append(wall4)
 walls.append(wall5)
@@ -108,39 +124,119 @@ walls.append(wall6)
 clock = time.Clock()
 #створення головного циклу
 game = True
+
+level1 = True
+level2 = False
 while game:
-    for e in event.get():
-        if e.type == QUIT:
+    if level1:
+        display.update()
+        clock.tick(60)
+        for e in event.get():
+            if e.type == QUIT:
+                game = False
+            elif e.type == KEYDOWN:
+                if e.key == K_SPACE:
+                    anti_mage.fire()
+
+
+        window.blit(picture,(0,0))
+        bullets.update()
+        bullets.draw(window)
+
+        anti_mage.reset()
+        pudge.reset()
+        Krip.reset()
+        Rune1.reset()
+        Rune2.reset()
+        next_level.reset()
+        anti_mage.move()
+        pudge.move2()
+        Krip.move3()
+        wall.draw_wall()
+        ###wall2.draw_wall()
+        wall3.draw_wall()
+        wall4.draw_wall()
+        wall5.draw_wall()
+        wall6.draw_wall()
+
+        if sprite.collide_rect(anti_mage, pudge) or sprite.collide_rect(anti_mage, Krip):
             game = False
+        if sprite.collide_rect(anti_mage, Rune1):
+            Rune1.rect.x = -500
+            wall3.rect.x = -1243
+        if sprite.collide_rect(anti_mage, Rune2):
+            Rune2.rect.x = -500
+            wall6.rect.x = -2347
+        if sprite.collide_rect(anti_mage, next_level):
+            next_level.rect.x = -4325
+            level1 = False
+            level2 = True
+
+            #####
+            window = display.set_mode((1100,700), RESIZABLE)
+            picture = transform.scale(image.load("bg2.webp"),(1100,700))
+
+            anti_mage = Object("anti-mage.png",50,300,100,100,5)
+            pudge = Object("pudge.png",800,50,100,100,4)
+            Krip = Object("Krip1.webp",500,150,100,100,4)
+            Rune1 = Object("rune.png",1030,20,70,70,4)
+            Rune2 = Object("rune.png",300,450,70,70,4)
+            next_level = Object("next_level.png",230,550,200,200,4)
+
+            wall = Wall(0, 0, 0, 200, 3, 40, 250)
+            wall2 = Wall(0, 0, 0, 200, 400, 40, 300)
+            #wall3 = Wall(0, 0, 0, 200, 350, 250, 40)
+            #wall4 = Wall(0, 0, 0, 450, 350, 40, 250)
+            #wall5 = Wall(0, 0, 0, 230,560, 250, 40)
+            #wall6 = Wall(0, 0, 0, 450,550, 40, 250)
+            walls = []
+            walls.append(wall)
+            #walls.append(wall2)
+            #walls.append(wall3)
+            #walls.append(wall4)
+            #walls.append(wall5)
+            #walls.append(wall6)
+            #######
+
+
+    if level2:
+        display.update()
+        clock.tick(60)
+        for e in event.get():
+            if e.type == QUIT:
+                game = False
 
 
 
-    window.blit(picture,(0,0))
-    anti_mage.reset()
-    pudge.reset()
-    Krip.reset()
-    Rune1.reset()
-    Rune2.reset()
-    anti_mage.move()
-    pudge.move2()
-    Krip.move3()
-    wall.draw_wall()
-    wall2.draw_wall()
-    wall3.draw_wall()
-    wall4.draw_wall()
-    wall5.draw_wall()
-    wall6.draw_wall()
+        window.blit(picture,(0,0))
+        anti_mage.reset()
+        pudge.reset()
+        Krip.reset()
+        Rune1.reset()
+        Rune2.reset()
+        next_level.reset()
+        anti_mage.move()
+        pudge.move2()
+        Krip.move3()
+        wall.draw_wall()
+        wall2.draw_wall()
+        #wall3.draw_wall()
+        #wall4.draw_wall()
+        #wall5.draw_wall()
+        #wall6.draw_wall()
 
-    if sprite.collide_rect(anti_mage, pudge) or sprite.collide_rect(anti_mage, Krip):
-        game = False
-    if sprite.collide_rect(anti_mage, Rune1):
-        Rune1.rect.x = -500
-        wall3.rect.x = -1243
-    if sprite.collide_rect(anti_mage, Rune2):
-        Rune2.rect.x = -500
-        wall6.rect.x = -2347
+        if sprite.collide_rect(anti_mage, pudge) or sprite.collide_rect(anti_mage, Krip):
+            game = False
+        if sprite.collide_rect(anti_mage, Rune1):
+            Rune1.rect.x = -500
+            wall3.rect.x = -1243
+        if sprite.collide_rect(anti_mage, Rune2):
+            Rune2.rect.x = -500
+            wall6.rect.x = -2347
+        if sprite.collide_rect(anti_mage, next_level):
+            next_level.rect.x = -4325
 
- 
+
     
-    display.update()
-    clock.tick(60)
+        
+        
