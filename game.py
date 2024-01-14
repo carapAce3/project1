@@ -95,10 +95,46 @@ bullets = sprite.Group()
 
 
 
+menu = display.set_mode((400,400), RESIZABLE)
+display.set_caption('Лабіринт')
 
 
-window = display.set_mode((1100,700), RESIZABLE)
-picture = transform.scale(image.load("bg2.webp"),(1100,700))
+start_button = Rect(150, 100, 100, 50)
+exit_button = Rect(150, 200, 100, 50)
+
+font.init()
+menu_font = font.Font(None, 24)
+
+mg = True
+while mg:
+    for e in event.get():
+        if e.type == QUIT:
+            mg = False
+        elif e.type == MOUSEBUTTONDOWN and e.button == 1:
+            if exit_button.collidepoint(mouse.get_pos()):
+                game = False
+                mg = False
+                
+            elif start_button.collidepoint(mouse.get_pos()):
+                mg = False
+                game = True
+                
+    menu.fill((0,0,0))
+    draw.rect(menu, (125,45,80), start_button)
+    draw.rect(menu, (125,45,80), exit_button)
+
+    start_text = menu_font.render('Почати гру', True,(0,0,0))
+    exit_text = menu_font.render('Вийти', True,(0,0,0))
+    menu.blit(start_text,(start_button.x+10, start_button.y+10))
+    menu.blit(exit_text,(exit_button.x+10, exit_button.y+10))
+
+    display.update()
+
+
+
+
+window = display.set_mode((1980,1080), RESIZABLE)
+picture = transform.scale(image.load("bg2.webp"),(1980,1080))
 
 anti_mage = Object("anti-mage.png",80,300,100,100,5)
 pudge = Object("pudge.png",800,50,100,100,4)
@@ -123,7 +159,6 @@ walls.append(wall6)
 
 clock = time.Clock()
 #створення головного циклу
-game = True
 
 level1 = True
 level2 = False
@@ -173,8 +208,8 @@ while game:
             level2 = True
 
             #####
-            window = display.set_mode((1100,700), RESIZABLE)
-            picture = transform.scale(image.load("bg2.webp"),(1100,700))
+            window = display.set_mode((1980,1080), RESIZABLE)
+            picture = transform.scale(image.load("bg2.webp"),(1980,1080))
 
             anti_mage = Object("anti-mage.png",50,300,100,100,5)
             pudge = Object("pudge.png",800,50,100,100,4)
@@ -185,14 +220,14 @@ while game:
 
             wall = Wall(0, 0, 0, 200, 3, 40, 250)
             wall2 = Wall(0, 0, 0, 200, 400, 40, 300)
-            #wall3 = Wall(0, 0, 0, 200, 350, 250, 40)
+            wall3 = Wall(0, 0, 0, 200, 250, 250, 40)
             #wall4 = Wall(0, 0, 0, 450, 350, 40, 250)
             #wall5 = Wall(0, 0, 0, 230,560, 250, 40)
             #wall6 = Wall(0, 0, 0, 450,550, 40, 250)
             walls = []
             walls.append(wall)
-            #walls.append(wall2)
-            #walls.append(wall3)
+            walls.append(wall2)
+            walls.append(wall3)
             #walls.append(wall4)
             #walls.append(wall5)
             #walls.append(wall6)
@@ -220,8 +255,8 @@ while game:
         Krip.move3()
         wall.draw_wall()
         wall2.draw_wall()
-        #wall3.draw_wall()
-        #wall4.draw_wall()
+        wall3.draw_wall()
+        wall4.draw_wall()
         #wall5.draw_wall()
         #wall6.draw_wall()
 
