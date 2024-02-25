@@ -1,17 +1,13 @@
 from pygame import *
 from random import randint
+import pygame_menu
 '''Необхідні класи'''
 
 
 #музика
-mixer.init()
 #фонова музика
-mixer.music.load('odetari.mp3')
-mixer.music.play()
 
 #звук
-sound1 = mixer.Sound('sound.mp3')
-sound1.play()
 
 
  
@@ -89,52 +85,56 @@ game = True
 finish = False
 clock = time.Clock()
  
-while game:
-    for e in event.get():
-        if e.type == QUIT:
-            game = False
-  
-    if finish != True:
-        window.fill(back)
-        player1.reset()
-        player2.reset()
-        ball.reset()
-        player1.update_l()
-        player2.update_r()
+def starting():
+    global game
+    global score1
+    global score2
+    global finish
+    global x
+    global y
+    global clock
 
-        t = "Рахунок: " + str(score1) + ' - ' + str(score2)
-        text = font1.render(t, True, (0,0,0))
-        window.blit(text,(100,100))
-
-        ball.rect.x -= x
-        ball.rect.y += y
-
-        if ball.rect.y > 450 or ball.rect.y < 0:
-            y *= -1
-        
-        if ball.rect.x < -40:
-            ball.rect.x = 200
-            ball.rect.y = 200
-            score2 += 1
-        if ball.rect.x > 600:
-            ball.rect.x = 200
-            ball.rect.y = 200
-            score1 += 1
-        if sprite.collide_rect(ball,player1) or sprite.collide_rect(ball,player2):
-            x *= -1
-        if score1 >= 3:
-            window.blit(picture,(0,0))
-        if score2 >= 3:
-            window.blit(picture2,(0,0))
-
-
-        
-
-        
-
-
-
-
-    display.update()
-    clock.tick(60)
+    while game:
+        for e in event.get():
+            if e.type == QUIT:
+                game = False
     
+        if finish != True:
+            window.fill(back)
+            player1.reset()
+            player2.reset()
+            ball.reset()
+            player1.update_l()
+            player2.update_r()
+
+            t = "Рахунок: " + str(score1) + ' - ' + str(score2)
+            text = font1.render(t, True, (0,0,0))
+            window.blit(text,(100,100))
+
+            ball.rect.x -= x
+            ball.rect.y += y
+
+            if ball.rect.y > 450 or ball.rect.y < 0:
+                y *= -1
+            
+            if ball.rect.x < -40:
+                ball.rect.x = 200
+                ball.rect.y = 200
+                score2 += 1
+            if ball.rect.x > 600:
+                ball.rect.x = 200
+                ball.rect.y = 200
+                score1 += 1
+            if sprite.collide_rect(ball,player1) or sprite.collide_rect(ball,player2):
+                x *= -1
+            if score1 >= 3:
+                window.blit(picture,(0,0))
+            if score2 >= 3:
+                window.blit(picture2,(0,0))
+
+
+        display.update()
+        clock.tick(60)
+    
+
+
